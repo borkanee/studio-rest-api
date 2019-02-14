@@ -1,0 +1,35 @@
+{
+  "name": "bg222ci-examination-2",
+  "version": "1.0.0",
+  "description": "RESTful API for music studio",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1dv527/bg222ci-examination-2.git"
+  },
+  "keywords": [
+    "REST",
+    "Node",
+    "JS",
+    "LNU"
+  ],
+  "author": "Boris Grubesic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1dv527/bg222ci-examination-2/issues"
+  },
+  "homepage": "https://github.com/1dv527/bg222ci-examination-2#readme",
+  "dependencies": {
+    "mongoose": "^5.4.12",
+    "mongoose-timestamp": "^0.6.0",
+    "restify": "^7.7.0",
+    "restify-errors": "^6.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}
