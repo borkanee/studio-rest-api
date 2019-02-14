@@ -1,3 +1,5 @@
+'use strict'
+
 const mongoose = require('mongoose')
 const timestamp = require('mongoose-timestamp')
 
@@ -38,4 +40,4 @@ SongSchema.plugin(timestamp)
 
 const Song = mongoose.model('Song', SongSchema)
 
-module.export = Song
+module.exports = Song
