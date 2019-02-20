@@ -2,12 +2,36 @@
 
 const errors = require('restify-errors')
 const Song = require('../models/Song')
+const config = require('../config/config')
 
 module.exports = server => {
   // Entry point
-  server.get('/', async (req, res, next) => {
+  server.get('/', (req, res, next) => {
     try {
-      // TODO: Return entrypoint using HATEOAS JSON:API architecture
+      // TODO: Return entrypoint using HAL + HATEOAS
+
+      let resObject = {
+        _links: {
+          self: {
+            href: config.URL
+          },
+          songs: {
+            href: `${config.URL}/songs`,
+            title: 'Songs'
+          },
+          ht_register: {
+            href: `${config.URL}/users`
+          },
+          ht_authenticate: {
+            href: `${config.URL}/authenticate`
+          }
+        },
+        hint_1: 'You need an account to enter Songs API',
+        hint_2: 'Create one by POSTing via the ht_register link..',
+        hint_3: 'If you already have an account, login to get a TOKEN by POSTing via the ht_authenticate link'
+      }
+
+      res.send(resObject)
 
       next()
     } catch (err) {
@@ -19,7 +43,40 @@ module.exports = server => {
   server.get('/songs', async (req, res, next) => {
     try {
       let songs = await Song.find({})
-      res.send(songs)
+
+      let songsResource = songs.map(song => {
+        const { engineer, _id, name, artist, length, producer, updatedAt, createdAt } = song
+
+        return {
+          _links: {
+            self: {
+              href: `${config.URL}/songs/${song._id}`
+            }
+          },
+          _id,
+          name,
+          artist,
+          length,
+          producer,
+          engineer,
+          updatedAt,
+          createdAt
+        }
+      })
+
+      let resObject = {
+        _links: {
+          self: {
+            href: `${config.URL}/songs`
+          }
+        },
+        count: songs.length,
+        _embedded: {
+          songs: songsResource
+        }
+      }
+
+      res.send(resObject)
 
       next()
     } catch (err) {
@@ -55,6 +112,7 @@ module.exports = server => {
   server.get('/songs/:id', async (req, res, next) => {
     try {
       let song = await Song.findById(req.params.id)
+
       res.send(song)
       next()
     } catch (err) {

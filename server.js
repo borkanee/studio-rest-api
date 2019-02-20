@@ -9,7 +9,7 @@ const server = restify.createServer()
 
 server.use(restify.plugins.bodyParser())
 
-server.use(restifyjwt({ secret: config.JWT_SECRET }).unless({ path: ['/users', '/authenticate'] }))
+server.use(restifyjwt({ secret: config.JWT_SECRET }).unless({ path: ['/users', '/authenticate', '/'] }))
 
 server.listen(config.PORT, () => {
   mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
