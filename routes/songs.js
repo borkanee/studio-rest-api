@@ -4,6 +4,17 @@ const errors = require('restify-errors')
 const Song = require('../models/Song')
 
 module.exports = server => {
+  // Entry point
+  server.get('/', async (req, res, next) => {
+    try {
+      // TODO: Return entrypoint using HATEOAS JSON:API architecture
+
+      next()
+    } catch (err) {
+      return next(new errors.InvalidContentError(err))
+    }
+  })
+
   // Get all songs
   server.get('/songs', async (req, res, next) => {
     try {

@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/1dv527/bg222ci-examination-2#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "mongoose": "^5.4.12",
     "mongoose-timestamp": "^0.6.0",
     "restify": "^7.7.0",
