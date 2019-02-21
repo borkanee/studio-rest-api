@@ -19,15 +19,15 @@ const SongSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  spotifyURL: {
-    type: String,
-    trim: true,
-    defualt: 'None'
-  },
   producer: {
     type: String,
     required: true,
     trim: true
+  },
+  spotifyURL: {
+    type: String,
+    trim: true,
+    default: 'None'
   },
   engineer: {
     type: String,

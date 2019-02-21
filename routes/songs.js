@@ -3,13 +3,12 @@
 const errors = require('restify-errors')
 const Song = require('../models/Song')
 const config = require('../config/config')
+const createSongResource = require('../createSongResource')
 
 module.exports = server => {
   // Entry point
   server.get('/', (req, res, next) => {
     try {
-      // TODO: Return entrypoint using HAL + HATEOAS
-
       let resObject = {
         _links: {
           self: {
@@ -17,7 +16,8 @@ module.exports = server => {
           },
           songs: {
             href: `${config.URL}/songs`,
-            title: 'Songs'
+            title: 'Collection of songs in the system'
+
           },
           ht_register: {
             href: `${config.URL}/users`
@@ -45,7 +45,7 @@ module.exports = server => {
       let songs = await Song.find({})
 
       let songsResource = songs.map(song => {
-        const { engineer, _id, name, artist, length, producer, updatedAt, createdAt } = song
+        const { engineer, _id, spotifyURL, name, artist, length, producer, updatedAt, createdAt } = song
 
         return {
           _links: {
@@ -58,6 +58,7 @@ module.exports = server => {
           artist,
           length,
           producer,
+          spotifyURL,
           engineer,
           updatedAt,
           createdAt
@@ -68,11 +69,43 @@ module.exports = server => {
         _links: {
           self: {
             href: `${config.URL}/songs`
+          },
+          create: {
+            href: `${config.URL}/songs`,
+            method: 'POST',
+            requestEncoding: 'application/json',
+            data: {
+              name: {
+                type: 'string',
+                required: true
+              },
+              artist: {
+                type: 'string',
+                required: true
+              },
+              length: {
+                type: 'number',
+                required: true,
+                description: 'Lenght in seconds'
+              },
+              producer: {
+                type: 'string',
+                required: true
+              },
+              spotifyURL: {
+                type: 'string',
+                optional: true
+              },
+              engineer: {
+                type: 'string',
+                optional: true
+              }
+            },
+            count: songs.length,
+            _embedded: {
+              songs: songsResource
+            }
           }
-        },
-        count: songs.length,
-        _embedded: {
-          songs: songsResource
         }
       }
 
@@ -90,18 +123,23 @@ module.exports = server => {
       return next(new errors.InvalidContentError("Expects 'application/json'"))
     }
 
-    let { name, artist, length, producer } = req.body
+    let { name, artist, length, producer, spotifyURL, engineer } = req.body
 
-    let customer = new Song({
+    let song = new Song({
       name,
       artist,
       length,
-      producer
+      producer,
+      spotifyURL,
+      engineer
     })
 
     try {
-      let newSong = await customer.save()
-      res.send(201, newSong)
+      let newSong = await song.save()
+
+      let songResource = createSongResource(newSong)
+
+      res.send(201, songResource)
       next()
     } catch (err) {
       return next(new errors.InternalError(err.message))
@@ -111,9 +149,10 @@ module.exports = server => {
   // Get one specific song
   server.get('/songs/:id', async (req, res, next) => {
     try {
-      let song = await Song.findById(req.params.id)
+      const song = await Song.findById(req.params.id, '-__v')
+      const songResource = createSongResource(song)
 
-      res.send(song)
+      res.send(songResource)
       next()
     } catch (err) {
       next(new errors.ResourceNotFoundError('No song with id: ' + req.params.id))
