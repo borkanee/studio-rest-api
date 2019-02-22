@@ -2,6 +2,7 @@
 
 const errors = require('restify-errors')
 const Song = require('../models/Song')
+const rjwt = require('restify-jwt-community')
 const config = require('../config/config')
 const createSongResource = require('../createSongResource')
 
@@ -19,16 +20,38 @@ module.exports = server => {
             title: 'Collection of songs in the system'
 
           },
-          ht_register: {
-            href: `${config.URL}/users`
+          register: {
+            href: `${config.URL}/users`,
+            method: 'POST',
+            parameters: {
+              username: {
+                type: 'string',
+                required: true
+              },
+              password: {
+                type: 'string',
+                required: true
+              }
+            }
           },
-          ht_authenticate: {
-            href: `${config.URL}/authenticate`
+          authenticate: {
+            href: `${config.URL}/authenticate`,
+            method: 'POST',
+            parameters: {
+              username: {
+                type: 'string',
+                required: true
+              },
+              password: {
+                type: 'string',
+                required: true
+              }
+            }
           }
         },
-        hint_1: 'You need an account to enter Songs API',
-        hint_2: 'Create one by POSTing via the ht_register link..',
-        hint_3: 'If you already have an account, login to get a TOKEN by POSTing via the ht_authenticate link'
+        hint_1: 'You need an account to create, update and delete resources',
+        hint_2: 'Create one by POSTing via the register link.',
+        hint_3: 'If you already have an account, login to get a TOKEN by POSTing via the authenticate link'
       }
 
       res.send(resObject)
@@ -45,23 +68,16 @@ module.exports = server => {
       let songs = await Song.find({})
 
       let songsResource = songs.map(song => {
-        const { engineer, _id, spotifyURL, name, artist, length, producer, updatedAt, createdAt } = song
+        const { _id, name } = song
 
         return {
           _links: {
             self: {
-              href: `${config.URL}/songs/${song._id}`
+              href: `${config.URL}/songs/${_id}`
             }
           },
           _id,
-          name,
-          artist,
-          length,
-          producer,
-          spotifyURL,
-          engineer,
-          updatedAt,
-          createdAt
+          name
         }
       })
 
@@ -73,8 +89,8 @@ module.exports = server => {
           create: {
             href: `${config.URL}/songs`,
             method: 'POST',
-            requestEncoding: 'application/json',
-            data: {
+            description: 'Add a song by POSTing with the data specified below.',
+            parameters: {
               name: {
                 type: 'string',
                 required: true
@@ -118,7 +134,7 @@ module.exports = server => {
   })
 
   // Add one song
-  server.post('/songs', async (req, res, next) => {
+  server.post('/songs', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
     if (!req.is('application/json')) {
       return next(new errors.InvalidContentError("Expects 'application/json'"))
     }
@@ -135,9 +151,8 @@ module.exports = server => {
     })
 
     try {
-      let newSong = await song.save()
-
-      let songResource = createSongResource(newSong)
+      const newSong = await song.save()
+      const songResource = createSongResource(newSong)
 
       res.send(201, songResource)
       next()
@@ -160,14 +175,16 @@ module.exports = server => {
   })
 
   // Update one song
-  server.put('/songs/:id', async (req, res, next) => {
+  server.put('/songs/:id', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
     if (!req.is('application/json')) {
       return next(new errors.InvalidContentError("Expects 'application/json'"))
     }
 
     try {
-      let song = await Song.findByIdAndUpdate(req.params.id, req.body, { new: true })
-      res.send(200, song)
+      const song = await Song.findByIdAndUpdate(req.params.id, req.body, { new: true })
+      const songResource = createSongResource(song)
+
+      res.send(200, songResource)
       next()
     } catch (err) {
       next(new errors.ResourceNotFoundError('No song with id: ' + req.params.id))
@@ -175,9 +192,9 @@ module.exports = server => {
   })
 
   // Delete one song
-  server.del('/songs/:id', async (req, res, next) => {
+  server.del('/songs/:id', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
     try {
-      let song = await Song.findByIdAndRemove(req.params.id)
+      const song = await Song.findByIdAndRemove(req.params.id)
       res.send(200, song)
     } catch (err) {
       next(new errors.ResourceNotFoundError('No song with id: ' + req.params.id))

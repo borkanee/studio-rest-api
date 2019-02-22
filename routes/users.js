@@ -20,11 +20,34 @@ module.exports = server => {
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(user.password, salt, async (err, hash) => {
         user.password = hash
-        res.send(201)
-        next()
+
         try {
           await user.save()
-          res.send(201)
+
+          const resObject = {
+            _links: {
+              self: {
+                href: `${config.URL}/users`
+              },
+              login: {
+                href: `${config.URL}/authenticate`,
+                method: 'POST',
+                deescription: 'Authenticate to get a TOKEN that you MUST use when calling the API',
+                parameters: {
+                  username: {
+                    type: 'string',
+                    required: true
+                  },
+                  password: {
+                    type: 'string',
+                    required: true
+                  }
+                }
+              }
+            }
+          }
+
+          res.send(201, resObject)
           next()
         } catch (err) {
           return next(new errors.InternalError(err.message))
@@ -40,14 +63,15 @@ module.exports = server => {
     try {
       const user = await authenticate(username, password)
 
-      const token = jwt.sign(user.toJSON(), config.JWT_SECRET, {
+      const tokenJWT = jwt.sign({ username: user.username }, config.JWT_SECRET, {
         expiresIn: '1h',
         issuer: 'borkanee'
       })
 
-      res.send(token)
+      res.send({ token: 'Bearer ' + tokenJWT })
       next()
     } catch (err) {
+      console.log(err)
       return next(new errors.UnauthorizedError(err.message))
     }
   })
