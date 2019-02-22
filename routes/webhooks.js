@@ -4,19 +4,20 @@ const errors = require('restify-errors')
 const validUrl = require('valid-url')
 const Webhook = require('../models/Webhook')
 const config = require('../config/config')
+const rjwt = require('restify-jwt-community')
 
 module.exports = server => {
   // Webhooks
-  server.post('/webhooks', async (req, res, next) => {
-    const { url } = req.body
+  server.post('/webhooks', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
+    const { payloadURL } = req.body
 
-    if (!validUrl.isUri(url)) {
+    if (!validUrl.isUri(payloadURL)) {
       return next(new errors.InvalidContentError('Not a URI'))
     }
 
     const webhook = new Webhook({
       event: config.WEBHOOK_EVENT,
-      payloadURL: url
+      payloadURL
     })
 
     try {

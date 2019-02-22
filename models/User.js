@@ -1,6 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose')
+const errors = require('restify-errors')
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -12,6 +13,18 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   }
+})
+
+UserSchema.pre('save', function (next) {
+  let user = this
+
+  User.find({ email: user.email }, (err, user) => {
+    if (!user) {
+      next()
+    } else {
+      next(new errors.ConflictError({ statusCode: 409 }, 'Please choose another username'))
+    }
+  })
 })
 
 const User = mongoose.model('User', UserSchema)

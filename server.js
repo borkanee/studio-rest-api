@@ -3,13 +3,13 @@
 const restify = require('restify')
 const mongoose = require('mongoose')
 const config = require('./config/config.js')
-const restifyjwt = require('restify-jwt-community')
+// const rjwt = require('restify-jwt-community')
 
 const server = restify.createServer()
 
 server.use(restify.plugins.bodyParser())
 
-// server.use(restifyjwt({ secret: config.JWT_SECRET }).unless({ path: ['/users', '/authenticate', '/'] }))
+// server.use(rjwt({ secret: config.JWT_SECRET }).unless({ path: ['/users', '/authenticate', '/'] }))
 
 server.listen(config.PORT, () => {
   mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })

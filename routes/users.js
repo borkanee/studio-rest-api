@@ -32,7 +32,7 @@ module.exports = server => {
               login: {
                 href: `${config.URL}/authenticate`,
                 method: 'POST',
-                deescription: 'Authenticate to get a TOKEN that you MUST use when calling the API',
+                description: 'Authenticate to get a TOKEN that you MUST use when calling the API',
                 parameters: {
                   username: {
                     type: 'string',
@@ -50,7 +50,7 @@ module.exports = server => {
           res.send(201, resObject)
           next()
         } catch (err) {
-          return next(new errors.InternalError(err.message))
+          return err.statusCode === 409 ? res.send(200, { message: err.message }) : next(new errors.InternalError(err.message))
         }
       })
     })
@@ -64,7 +64,7 @@ module.exports = server => {
       const user = await authenticate(username, password)
 
       const tokenJWT = jwt.sign({ username: user.username }, config.JWT_SECRET, {
-        expiresIn: '1h',
+        expiresIn: '5h',
         issuer: 'borkanee'
       })
 

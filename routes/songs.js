@@ -5,6 +5,7 @@ const Song = require('../models/Song')
 const rjwt = require('restify-jwt-community')
 const config = require('../config/config')
 const createSongResource = require('../createSongResource')
+const webhooks = require('../webhooks')
 
 module.exports = server => {
   // Entry point
@@ -17,7 +18,7 @@ module.exports = server => {
           },
           songs: {
             href: `${config.URL}/songs`,
-            title: 'Collection of songs in the system'
+            description: 'Collection of songs in the system'
 
           },
           register: {
@@ -47,11 +48,22 @@ module.exports = server => {
                 required: true
               }
             }
+          },
+          webhooks: {
+            href: `${config.URL}/webhooks`,
+            method: 'POST',
+            parameters: {
+              payloadURL: {
+                type: 'string',
+                required: true
+              }
+            }
           }
         },
         hint_1: 'You need an account to create, update and delete resources',
-        hint_2: 'Create one by POSTing via the register link.',
-        hint_3: 'If you already have an account, login to get a TOKEN by POSTing via the authenticate link'
+        hint_2: 'Create an account by POSTing via the register link.',
+        hint_3: 'If you already have an account, login to get a TOKEN by POSTing via the authenticate link',
+        hint_4: 'If you want to register webhooks, create by POSTing via the webhooks link'
       }
 
       res.send(resObject)
@@ -116,12 +128,12 @@ module.exports = server => {
                 type: 'string',
                 optional: true
               }
-            },
-            count: songs.length,
-            _embedded: {
-              songs: songsResource
             }
           }
+        },
+        count: songs.length,
+        _embedded: {
+          songs: songsResource
         }
       }
 
@@ -141,7 +153,7 @@ module.exports = server => {
 
     let { name, artist, length, producer, spotifyURL, engineer } = req.body
 
-    let song = new Song({
+    let newSong = new Song({
       name,
       artist,
       length,
@@ -151,10 +163,13 @@ module.exports = server => {
     })
 
     try {
-      const newSong = await song.save()
+      await newSong.save()
       const songResource = createSongResource(newSong)
 
       res.send(201, songResource)
+
+      webhooks.trigger(newSong, req.user.username)
+
       next()
     } catch (err) {
       return next(new errors.InternalError(err.message))
