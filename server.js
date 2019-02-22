@@ -8,7 +8,6 @@ const config = require('./config/config.js')
 const server = restify.createServer()
 
 server.use(restify.plugins.bodyParser())
-
 // server.use(rjwt({ secret: config.JWT_SECRET }).unless({ path: ['/users', '/authenticate', '/'] }))
 
 server.listen(config.PORT, () => {
