@@ -1,4 +1,3 @@
-const config = require('./config/config')
 const Webhook = require('./models/Webhook')
 const fetch = require('node-fetch')
 const errors = require('restify-errors')
@@ -13,7 +12,7 @@ module.exports.trigger = async (newSong, user) => {
       sender: user,
       song: {
         name: newSong.name,
-        url: `${config.URL}/songs/${newSong._id}`
+        url: `${process.env.URL}/songs/${newSong._id}`
       }
     }
 

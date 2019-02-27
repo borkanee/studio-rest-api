@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "RESTful API for music studio",
   "main": "server.js",
-  "scripts": {
-    "dev": "nodemon server.js",
+  "scripts": { 
+    "dev": "NODE_ENV=development nodemon server.js",
     "start": "node server.js"
   },
   "repository": {

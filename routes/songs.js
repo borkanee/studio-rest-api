@@ -3,7 +3,6 @@
 const errors = require('restify-errors')
 const Song = require('../models/Song')
 const rjwt = require('restify-jwt-community')
-const config = require('../config/config')
 const createSongResource = require('../createSongResource')
 const webhooks = require('../webhooks')
 
@@ -14,15 +13,15 @@ module.exports = server => {
       let resObject = {
         _links: {
           self: {
-            href: config.URL
+            href: process.env.URL
           },
           songs: {
-            href: `${config.URL}/songs`,
+            href: `${process.env.URL}/songs`,
             description: 'Collection of songs in the system'
 
           },
           register: {
-            href: `${config.URL}/users`,
+            href: `${process.env.URL}/users`,
             method: 'POST',
             parameters: {
               username: {
@@ -36,7 +35,7 @@ module.exports = server => {
             }
           },
           authenticate: {
-            href: `${config.URL}/authenticate`,
+            href: `${process.env.URL}/authenticate`,
             method: 'POST',
             parameters: {
               username: {
@@ -50,7 +49,7 @@ module.exports = server => {
             }
           },
           webhooks: {
-            href: `${config.URL}/webhooks`,
+            href: `${process.env.URL}/webhooks`,
             method: 'POST',
             parameters: {
               payloadURL: {
@@ -85,7 +84,7 @@ module.exports = server => {
         return {
           _links: {
             self: {
-              href: `${config.URL}/songs/${_id}`
+              href: `${process.env.URL}/songs/${_id}`
             }
           },
           _id,
@@ -96,10 +95,10 @@ module.exports = server => {
       let resObject = {
         _links: {
           self: {
-            href: `${config.URL}/songs`
+            href: `${process.env.URL}/songs`
           },
           create: {
-            href: `${config.URL}/songs`,
+            href: `${process.env.URL}/songs`,
             method: 'POST',
             description: 'Add a song by POSTing with the data specified below.',
             parameters: {
@@ -146,7 +145,7 @@ module.exports = server => {
   })
 
   // Add one song
-  server.post('/songs', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
+  server.post('/songs', rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
     if (!req.is('application/json')) {
       return next(new errors.InvalidContentError("Expects 'application/json'"))
     }
@@ -190,7 +189,7 @@ module.exports = server => {
   })
 
   // Update one song
-  server.put('/songs/:id', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
+  server.put('/songs/:id', rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
     if (!req.is('application/json')) {
       return next(new errors.InvalidContentError("Expects 'application/json'"))
     }
@@ -207,7 +206,7 @@ module.exports = server => {
   })
 
   // Delete one song
-  server.del('/songs/:id', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
+  server.del('/songs/:id', rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
     try {
       const song = await Song.findByIdAndRemove(req.params.id)
       res.send(200, song)

@@ -5,7 +5,6 @@ const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 const { authenticate } = require('../authenticate')
 const jwt = require('jsonwebtoken')
-const config = require('../config/config')
 
 module.exports = server => {
   // Register
@@ -27,10 +26,10 @@ module.exports = server => {
           const resObject = {
             _links: {
               self: {
-                href: `${config.URL}/users`
+                href: `${process.env.URL}/users`
               },
               login: {
-                href: `${config.URL}/authenticate`,
+                href: `${process.env.URL}/authenticate`,
                 method: 'POST',
                 description: 'Authenticate to get a TOKEN that you MUST use when calling the API',
                 parameters: {
@@ -63,7 +62,7 @@ module.exports = server => {
     try {
       const user = await authenticate(username, password)
 
-      const tokenJWT = jwt.sign({ username: user.username }, config.JWT_SECRET, {
+      const tokenJWT = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
         expiresIn: '5h',
         issuer: 'borkanee'
       })

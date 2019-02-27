@@ -5,6 +5,7 @@
 
 ### Config folder ###
 config/
+.env
 
 ### VisualStudioCode ###
 .vscode/*

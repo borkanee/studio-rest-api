@@ -3,12 +3,11 @@
 const errors = require('restify-errors')
 const validUrl = require('valid-url')
 const Webhook = require('../models/Webhook')
-const config = require('../config/config')
 const rjwt = require('restify-jwt-community')
 
 module.exports = server => {
   // Webhooks
-  server.post('/webhooks', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
+  server.post('/webhooks', rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
     const { payloadURL } = req.body
 
     if (!validUrl.isUri(payloadURL)) {
@@ -16,7 +15,7 @@ module.exports = server => {
     }
 
     const webhook = new Webhook({
-      event: config.WEBHOOK_EVENT,
+      event: process.env.WEBHOOK_EVENT,
       payloadURL
     })
 
@@ -27,10 +26,10 @@ module.exports = server => {
       const resObject = {
         _links: {
           self: {
-            href: `${config.URL}/webhooks`
+            href: `${process.env.URL}/webhooks`
           },
           songs: {
-            href: `${config.URL}/songs`,
+            href: `${process.env.URL}/songs`,
             method: 'GET'
           }
         },
