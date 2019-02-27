@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'development') {
 const httpsRedirect = function (req, res, next) {
   if (process.env.NODE_ENV === 'production') {
     if (req.headers['x-forwarded-proto'] !== 'https') {
-      return res.redirect('https://' + req.headers.host + req.url)
+      return res.redirect('https://' + req.headers.host + req.url, next)
     } else {
       return next()
     }
