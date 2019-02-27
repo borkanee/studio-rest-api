@@ -4,11 +4,12 @@ const errors = require('restify-errors')
 const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 const { authenticate } = require('../authenticate')
+const checkContentType = require('../checkContentType')
 const jwt = require('jsonwebtoken')
 
 module.exports = server => {
   // Register
-  server.post('/users', async (req, res, next) => {
+  server.post('/users', checkContentType, async (req, res, next) => {
     let { username, password } = req.body
 
     const user = new User({
@@ -56,14 +57,14 @@ module.exports = server => {
   })
 
   // Authenticate
-  server.post('/authenticate', async (req, res, next) => {
+  server.post('/authenticate', checkContentType, async (req, res, next) => {
     const { username, password } = req.body
 
     try {
       const user = await authenticate(username, password)
 
       const tokenJWT = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
-        expiresIn: '5h',
+        expiresIn: '2h',
         issuer: 'borkanee'
       })
 

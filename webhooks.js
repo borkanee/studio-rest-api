@@ -1,6 +1,5 @@
 const Webhook = require('./models/Webhook')
 const fetch = require('node-fetch')
-const errors = require('restify-errors')
 
 module.exports.trigger = async (newSong, user) => {
   const hooks = await Webhook.find({})

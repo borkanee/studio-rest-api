@@ -5,9 +5,10 @@ const Song = require('../models/Song')
 const rjwt = require('restify-jwt-community')
 const createSongResource = require('../createSongResource')
 const webhooks = require('../webhooks')
+const checkContentType = require('../checkContentType')
 
 module.exports = server => {
-  // Entry point
+  // ENTRY POINT API!
   server.get('/', (req, res, next) => {
     try {
       let resObject = {
@@ -76,9 +77,16 @@ module.exports = server => {
   // Get all songs
   server.get('/songs', async (req, res, next) => {
     try {
-      let songs = await Song.find({})
+      let pagination = await Song.paginate({}, {
+        page: req.query.page ? parseInt(req.query.page) : 1,
+        limit: 10,
+        select: '_id name',
+        collation: {
+          locale: 'en'
+        }
+      })
 
-      let songsResource = songs.map(song => {
+      let songsResource = pagination.docs.map(song => {
         const { _id, name } = song
 
         return {
@@ -95,7 +103,19 @@ module.exports = server => {
       let resObject = {
         _links: {
           self: {
+            href: req.query.page ? `${process.env.URL}/songs?page=${pagination.page}` : `${process.env.URL}/songs`
+          },
+          first: {
             href: `${process.env.URL}/songs`
+          },
+          prev: pagination.hasPrevPage ? {
+            href: `${process.env.URL}/songs?page=${pagination.prevPage}`
+          } : {},
+          next: pagination.hasNextPage ? {
+            href: `${process.env.URL}/songs?page=${pagination.nextPage}`
+          } : {},
+          last: {
+            href: `${process.env.URL}/songs?page=${pagination.totalPages}`
           },
           create: {
             href: `${process.env.URL}/songs`,
@@ -130,7 +150,8 @@ module.exports = server => {
             }
           }
         },
-        count: songs.length,
+        count: pagination.docs.length,
+        total: pagination.totalDocs,
         _embedded: {
           songs: songsResource
         }
@@ -145,11 +166,7 @@ module.exports = server => {
   })
 
   // Add one song
-  server.post('/songs', rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
-    if (!req.is('application/json')) {
-      return next(new errors.InvalidContentError("Expects 'application/json'"))
-    }
-
+  server.post('/songs', checkContentType, rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
     let { name, artist, length, producer, spotifyURL, engineer } = req.body
 
     let newSong = new Song({
@@ -189,11 +206,7 @@ module.exports = server => {
   })
 
   // Update one song
-  server.put('/songs/:id', rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
-    if (!req.is('application/json')) {
-      return next(new errors.InvalidContentError("Expects 'application/json'"))
-    }
-
+  server.put('/songs/:id', checkContentType, rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
     try {
       const song = await Song.findByIdAndUpdate(req.params.id, req.body, { new: true })
       const songResource = createSongResource(song)

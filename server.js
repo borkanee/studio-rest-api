@@ -3,30 +3,18 @@
 const restify = require('restify')
 const mongoose = require('mongoose')
 const redirectSSL = require('redirect-ssl')
-
 // const rjwt = require('restify-jwt-community')
 
 if (process.env.NODE_ENV === 'development') {
   require('dotenv').config()
 }
 
-const httpsRedirect = function (req, res, next) {
-  if (process.env.NODE_ENV === 'production') {
-    if (req.headers['x-forwarded-proto'] !== 'https') {
-      return res.redirect('https://' + req.headers.host + req.url, next)
-    } else {
-      return next()
-    }
-  } else {
-    return next()
-  }
-}
-
 const server = restify.createServer()
 
-server.use(restify.plugins.bodyParser())
+server.use(restify.plugins.jsonBodyParser())
+server.use(restify.plugins.acceptParser('application/json'))
+server.use(restify.plugins.queryParser())
 server.use(redirectSSL)
-// server.use(rjwt({ secret: config.JWT_SECRET }).unless({ path: ['/users', '/authenticate', '/'] }))
 
 server.listen(process.env.PORT, () => {
   mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })

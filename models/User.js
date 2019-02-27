@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
 UserSchema.pre('save', function (next) {
   let user = this
 
-  User.find({ email: user.email }, (err, user) => {
+  User.findOne({ username: user.username }, (err, user) => {
     if (!user) {
       next()
     } else {

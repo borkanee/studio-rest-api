@@ -4,10 +4,11 @@ const errors = require('restify-errors')
 const validUrl = require('valid-url')
 const Webhook = require('../models/Webhook')
 const rjwt = require('restify-jwt-community')
+const checkContentType = require('../checkContentType')
 
 module.exports = server => {
   // Webhooks
-  server.post('/webhooks', rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
+  server.post('/webhooks', checkContentType, rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
     const { payloadURL } = req.body
 
     if (!validUrl.isUri(payloadURL)) {

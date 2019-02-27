@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose')
 const timestamp = require('mongoose-timestamp')
+const paginate = require('mongoose-paginate-v2')
 
 const SongSchema = new mongoose.Schema({
   name: {
@@ -37,6 +38,7 @@ const SongSchema = new mongoose.Schema({
 })
 
 SongSchema.plugin(timestamp)
+SongSchema.plugin(paginate)
 
 const Song = mongoose.model('Song', SongSchema)
 

@@ -27,6 +27,7 @@
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^8.5.0",
     "mongoose": "^5.4.12",
+    "mongoose-paginate-v2": "^1.0.23",
     "mongoose-timestamp": "^0.6.0",
     "node-fetch": "^2.3.0",
     "redirect-ssl": "^1.4.0",
@@ -36,6 +37,7 @@
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
+    "dotenv": "^6.2.0",
     "nodemon": "^1.18.10"
   }
 }
