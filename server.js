@@ -2,6 +2,8 @@
 
 const restify = require('restify')
 const mongoose = require('mongoose')
+const redirectSSL = require('redirect-ssl')
+
 // const rjwt = require('restify-jwt-community')
 
 if (process.env.NODE_ENV === 'development') {
@@ -23,7 +25,7 @@ const httpsRedirect = function (req, res, next) {
 const server = restify.createServer()
 
 server.use(restify.plugins.bodyParser())
-server.use(httpsRedirect)
+server.use(redirectSSL)
 // server.use(rjwt({ secret: config.JWT_SECRET }).unless({ path: ['/users', '/authenticate', '/'] }))
 
 server.listen(process.env.PORT, () => {
