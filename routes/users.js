@@ -18,7 +18,7 @@ module.exports = server => {
 
     const user = new User({
       username,
-      passwords
+      password
     })
 
     bcrypt.genSalt(10, (err, salt) => {
