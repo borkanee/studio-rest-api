@@ -33,7 +33,8 @@
     "restify": "^7.7.0",
     "restify-errors": "^6.1.1",
     "restify-jwt-community": "^1.0.9",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "xss-clean": "^0.1.1"
   },
   "devDependencies": {
     "dotenv": "^6.2.0",

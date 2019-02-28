@@ -3,6 +3,7 @@
 const restify = require('restify')
 const mongoose = require('mongoose')
 const errors = require('restify-errors')
+const xssClean = require('xss-clean')
 
 if (process.env.NODE_ENV === 'development') {
   require('dotenv').config()
@@ -13,6 +14,9 @@ const server = restify.createServer()
 server.use(restify.plugins.jsonBodyParser())
 server.use(restify.plugins.acceptParser('application/json'))
 server.use(restify.plugins.queryParser())
+
+// Discuss use of sanitaion in REST API, since we are only returning JSON
+server.use(xssClean())
 server.use((req, res, next) => {
   if (req.header('x-forwarded-proto') !== 'https') {
     if (req.method === 'GET') {
