@@ -6,7 +6,7 @@ const paginate = require('mongoose-paginate-v2')
 
 const SongSchema = new mongoose.Schema({
   name: {
-    type: Strings,
+    type: String,
     required: true,
     trim: true
   },
