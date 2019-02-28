@@ -1,0 +1,729 @@
+{
+	"info": {
+		"_postman_id": "1433fdd4-eb0e-4dd3-a204-a3b630281e08",
+		"name": "Studio API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Entrypoint - /GET api",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All songs - GET /songs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "71d3b035-e7c6-4b73-8fa7-d5251fb24a73",
+						"exec": [
+							"let jsonData = JSON.parse(responseBody)",
+							"let songs = jsonData._embedded.songs",
+							"let random = songs[Math.floor(Math.random()*songs.length)]",
+							"postman.setEnvironmentVariable('songId', random._id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/songs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Songs page 2 - GET /songs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "71d3b035-e7c6-4b73-8fa7-d5251fb24a73",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/songs?page=2",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET req HTTP redirects to HTTPS - GET /songs ",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{HTTP}}/songs",
+					"host": [
+						"{{HTTP}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wrong Accept Header",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "text/html",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/songs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Song - GET /songs/:id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/songs/{{songId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs",
+						"{{songId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Missing ID Song - GET /songs/:id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/songs/123",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs",
+						"123"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get users not allowed - GET /users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register new user - POST /users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3dc991e4-4eed-4f2e-9ce5-f6b9feea9bab",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"username\",\n\t\"password\": \"password\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Username TAKEN - POST /users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuserTAKEN\",\n\t\"password\": \"passwordTAKEN\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register User w short cred - POST /users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"t\",\n\t\"password\": \"password\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login - POST /authenticate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fd504d59-4351-428a-982e-0f01395107d3",
+						"exec": [
+							"let jsonData = JSON.parse(responseBody)",
+							"postman.setEnvironmentVariable('token', jsonData.token)",
+							"postman.setEnvironmentVariable('wrongToken', jsonData.token + 1)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"username\",\n\t\"password\": \"password\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/authenticate",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login with wrong cred - POST /authenticate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuserWRONG\",\n\t\"password\": \"wrong\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/authenticate",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Song - POST /songs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Detta är en ny låt\",\n    \"artist\": \"Producer\",\n    \"length\": 104,\n    \"producer\": \"New producer\",\n    \"spotifyURL\": \"https://SomeSpotifyUrl\",\n    \"engineer\": \"some Engineer\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/songs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Song - PUT /songs/:id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"A new title for this song...\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/songs/{{songId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs",
+						"{{songId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Req protected route with wrong token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{wrongToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"new song\",\n\t\"artist\": \"new artist\",\n\t\"producer\": \"new producer\",\n\t\"length\": 125\n}"
+				},
+				"url": {
+					"raw": "{{url}}/songs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Webhook - POST /webhooks",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"payloadURL\": \"https://webhook.site/3370ca23-bf83-428f-94b9-1bc279584717\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/webhooks",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"webhooks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Webhook w URI wrong - POST /webhooks",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"payloadURL\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/webhooks",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"webhooks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Expired token - POST /songs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{expiredToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Detta är en ny låt\",\n    \"artist\": \"WOW EN NY ARTIST OCKSÅ\",\n    \"length\": 104,\n    \"producer\": \"New producer\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/songs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST req HTTP forbidden - POST /songs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"testname\",\n\t\"artist\": \"testartist\",\n\t\"length\": 152,\n\t\"producer\": \"testproducer\"\n}"
+				},
+				"url": {
+					"raw": "{{HTTP}}/songs",
+					"host": [
+						"{{HTTP}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Song w Missing Param - POST /songs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"name\",\n\t\"artist\": \"artist\",\n\t\"length\": \"\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/songs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post body w invalid JSON - POST /songs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"name\",\n\t\"artist\": \"artist\",\n\t\"length\": \n}"
+				},
+				"url": {
+					"raw": "{{url}}/songs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete song - DEL /songs/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/songs/{{songId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs",
+						"{{songId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete song missing ID - DEL /songs/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/songs/123",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"songs",
+						"123"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
