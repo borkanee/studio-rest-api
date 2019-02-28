@@ -25,6 +25,7 @@
   "homepage": "https://github.com/1dv527/bg222ci-examination-2#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "heroku-ssl-redirect": "0.0.4",
     "jsonwebtoken": "^8.5.0",
     "mongoose": "^5.4.12",
     "mongoose-paginate-v2": "^1.0.23",

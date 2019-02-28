@@ -2,8 +2,7 @@
 
 const restify = require('restify')
 const mongoose = require('mongoose')
-const redirectSSL = require('redirect-ssl')
-// const rjwt = require('restify-jwt-community')
+const errors = require('restify-errors')
 
 if (process.env.NODE_ENV === 'development') {
   require('dotenv').config()
@@ -14,7 +13,17 @@ const server = restify.createServer()
 server.use(restify.plugins.jsonBodyParser())
 server.use(restify.plugins.acceptParser('application/json'))
 server.use(restify.plugins.queryParser())
-server.use(redirectSSL)
+server.use((req, res, next) => {
+  if (req.header('x-forwarded-proto') !== 'https') {
+    if (req.method === 'GET') {
+      return res.redirect('https://' + req.headers.host + req.url, next)
+    } else {
+      return next(new errors.ForbiddenError('Only HTTPS connections are allowed'))
+    }
+  } else {
+    return next()
+  }
+})
 
 server.listen(process.env.PORT, () => {
   mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })

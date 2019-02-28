@@ -3,9 +3,9 @@
 const errors = require('restify-errors')
 const Song = require('../models/Song')
 const rjwt = require('restify-jwt-community')
-const createSongResource = require('../createSongResource')
-const webhooks = require('../webhooks')
-const checkContentType = require('../checkContentType')
+const createSongResource = require('../utils/createSongResource')
+const webhooks = require('../utils/webhooks')
+const checkContentType = require('../utils/checkContentType')
 
 module.exports = server => {
   // ENTRY POINT API!
@@ -188,7 +188,9 @@ module.exports = server => {
 
       next()
     } catch (err) {
-      return next(new errors.InternalError(err.message))
+      return err.name === 'ValidationError'
+        ? next(new errors.UnprocessableEntityError(err.message))
+        : next(new errors.InternalError(err.message))
     }
   })
 
@@ -222,7 +224,18 @@ module.exports = server => {
   server.del('/songs/:id', rjwt({ secret: process.env.JWT_SECRET }), async (req, res, next) => {
     try {
       const song = await Song.findByIdAndRemove(req.params.id)
-      res.send(200, song)
+
+      const resObject = {
+        _links: {
+          songs: {
+            href: `${process.env.URL}/songs`
+          }
+        },
+        id: song._id,
+        name: song.name
+      }
+
+      res.send(200, resObject)
     } catch (err) {
       next(new errors.ResourceNotFoundError('No song with id: ' + req.params.id))
     }

@@ -4,7 +4,7 @@ const errors = require('restify-errors')
 const validUrl = require('valid-url')
 const Webhook = require('../models/Webhook')
 const rjwt = require('restify-jwt-community')
-const checkContentType = require('../checkContentType')
+const checkContentType = require('../utils/checkContentType')
 
 module.exports = server => {
   // Webhooks
@@ -41,7 +41,9 @@ module.exports = server => {
       res.send(201, resObject)
       next()
     } catch (err) {
-      return next(new errors.InternalError(err.message))
+      return err.name === 'ValidationError'
+        ? next(new errors.UnprocessableEntityError(err.message))
+        : next(new errors.InternalError(err.message))
     }
   })
 }

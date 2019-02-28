@@ -1,4 +1,4 @@
-const Webhook = require('./models/Webhook')
+const Webhook = require('../models/Webhook')
 const fetch = require('node-fetch')
 
 module.exports.trigger = async (newSong, user) => {

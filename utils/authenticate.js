@@ -1,9 +1,9 @@
 'use strict'
 
-const User = require('./models/User')
+const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 
-module.exports.authenticate = async (username, password) => {
+module.exports = async (username, password) => {
   try {
     const user = await User.findOne({ username })
 

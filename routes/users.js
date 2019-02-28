@@ -3,14 +3,18 @@
 const errors = require('restify-errors')
 const User = require('../models/User')
 const bcrypt = require('bcryptjs')
-const { authenticate } = require('../authenticate')
-const checkContentType = require('../checkContentType')
+const authenticate = require('../utils/authenticate')
+const checkContentType = require('../utils/checkContentType')
 const jwt = require('jsonwebtoken')
 
 module.exports = server => {
   // Register
   server.post('/users', checkContentType, async (req, res, next) => {
     let { username, password } = req.body
+
+    if (username.length < 4 || password.length < 6) {
+      return next(new errors.UnprocessableEntityError('Username: 4 characters or more, Password: 6 characters or more'))
+    }
 
     const user = new User({
       username,
@@ -50,7 +54,9 @@ module.exports = server => {
           res.send(201, resObject)
           next()
         } catch (err) {
-          return err.statusCode === 409 ? res.send(200, { message: err.message }) : next(new errors.InternalError(err.message))
+          if (err.statusCode === 409) return res.send(200, { message: err.message })
+          if (err.name === 'ValidationError') return next(new errors.UnprocessableEntityError(err.message))
+          return next(new errors.InternalError(err.message))
         }
       })
     })
@@ -71,7 +77,6 @@ module.exports = server => {
       res.send({ token: 'Bearer ' + tokenJWT })
       next()
     } catch (err) {
-      console.log(err)
       return next(new errors.UnauthorizedError(err.message))
     }
   })

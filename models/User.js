@@ -20,9 +20,9 @@ UserSchema.pre('save', function (next) {
 
   User.findOne({ username: user.username }, (err, user) => {
     if (!user) {
-      next()
+      return next()
     } else {
-      next(new errors.ConflictError({ statusCode: 409 }, 'Please choose another username'))
+      return next(new errors.ConflictError({ statusCode: 409 }, 'Please choose another username'))
     }
   })
 })
