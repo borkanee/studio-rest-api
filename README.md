@@ -4,6 +4,8 @@ The API is intended to be used by Studio members looking to report songs they ha
 
 TO TEST: Download the two JSON-files inside the postman-folder. One is for the collection and the other is for enviroment variables. 
 
+If the API is unused for a while, it will sleep. The first request might take a second. This the way free apps run on Heroku.
+
 **Explain and defend your implementation of HATEOAS in your solution** <br>
 I have tried to follow the HAL specification (http://stateless.co/hal_specification.html) as much as possible. I would say that the specification is somewhat unclear on certain points and many of the larger businesses that implement HAL do that in different ways. There doesn't seem to be a "correct" way. But the main point here are the links that "move" the API forward to additional resources and tell the client it's position. Keys within links describe the relationship between the current resource and the link. Embedded resources are used for presenting children of a resource, for example in a list. I have an entry point in the API with information and relative links to get started, such as register, authenticate, list songs etc. After a successful registration, there is a link to autenticate as well as an description. When presenting a collection of songs, there are next, last, first, and previos links for pages, since I'm using pagination and only present 10 resources per page.
 
