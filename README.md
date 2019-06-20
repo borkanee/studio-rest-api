@@ -1,3 +1,7 @@
+Made during the course [1dv527](http://coursepress.lnu.se/kurs/the-web-as-an-application-platform/) (The web as an application platform) at Linnaeus University. 
+
+---
+
 Simple Studio API available at https://api-studio.herokuapp.com/
 
 The API is intended to be used by Studio members looking to report songs they have recorded. Resources are not tied to specific users, all registered users have the ability to create, update and delete songs.
