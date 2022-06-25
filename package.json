@@ -29,7 +29,7 @@
     "mongoose": "^5.4.12",
     "mongoose-paginate-v2": "^1.0.23",
     "mongoose-timestamp": "^0.6.0",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.7",
     "restify": "^7.7.0",
     "restify-errors": "^6.1.1",
     "restify-jwt-community": "^1.0.9",
